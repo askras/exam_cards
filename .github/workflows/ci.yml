@@ -1,0 +1,45 @@
+name: Build exam cards
+
+on:
+  push:
+    branches: [ develop, main ]
+    paths:
+      - "tex_form/**"
+      - "exam_cards/questions.csv"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [ develop, main ]
+    paths:
+      - "tex_form/**"
+      - "exam_cards/questions.csv"
+      - ".github/workflows/ci.yml"
+
+jobs:
+  build-exam-cards:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install TeXLive
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-lang-cyrillic
+
+      - name: Build exam cards PDF
+        working-directory: tex_form
+        run: |
+          mkdir -p ../exam_cards
+          pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
+          pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
+          mv ../exam_cards/main.pdf ../exam_cards/exam_cards.pdf
+
+      - name: Upload exam cards PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: exam-cards-pdf
+          path: exam_cards/exam_cards.pdf
