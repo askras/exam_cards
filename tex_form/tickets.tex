@@ -14,16 +14,14 @@
     \textbf{По дисциплине <<\Course>>}
   \end{center}
 
-  % Третий вопрос добавляется условно. \ifthenelse внутри tblr ненадёжен,
-  % поэтому строку готовим заранее в \ExtraRows и разворачиваем её
-  % через ключ tabularray expand (он раскрывает макрос до парсинга таблицы).
-  % row{2-4} безопасен и для 2 вопросов: несуществующая 4-я строка игнорируется.
-  \ifthenelse{\equal{\NumberOfQuestions}{3}}
-    {\def\ExtraRows{\\ 3 & \DTLgetvalue{\Question}{questions}{\num}{3}\Question & \ThreeQuestionMark}}
-    {\def\ExtraRows{}}
+  % Строки билета строятся динамически: включаются только непустые вопросы,
+  % поэтому в разных билетах может быть разное число вопросов (пустая ячейка
+  % CSV = вопрос пропускается). \TicketRows разворачивается ключом tabularray
+  % expand. row{2-4} безопасен и для меньшего числа: лишние строки игнорируются.
+  \BuildTicketRows{\num}
   \begin{table}[h!]
     \centering
-    \begin{tblr}[expand=\ExtraRows]
+    \begin{tblr}[expand=\TicketRows]
     {
       width = \linewidth,
       colspec = {Q[37]Q[693]Q[210]},
@@ -35,9 +33,7 @@
       vlines,
     }
       № & Вопрос / задача & Максимальная оценка в баллах \\
-      1 & \DTLgetvalue{\Question}{questions}{\num}{1}\Question & \OneQuestionMark \\
-      2 & \DTLgetvalue{\Question}{questions}{\num}{2}\Question & \TwoQuestionMark
-      \ExtraRows
+      \TicketRows
     \end{tblr}
   \end{table}
 

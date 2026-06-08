@@ -31,6 +31,8 @@
 \usepackage[english, russian]{babel}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
+% Картинки для вопросов ищутся в ./images (от корня репозитория).
+\graphicspath{{../images/}{images/}}
 \usepackage{tabularray}
 \usepackage{makecell}
 \usepackage{tikz}
@@ -40,3 +42,51 @@
 \usepackage{geometry}
 \geometry{top=1.0cm, bottom=1.0cm, left=1.2cm, right=1.2cm}
 \pagenumbering{gobble}
+
+% ======================================================================
+%  Рендеринг билетов (вспомогательные макросы)
+% ======================================================================
+
+% Ячейка вопроса. Внутри вопроса можно использовать:
+%   \\           — перенос строки (авто-перенос по ширине колонки сохраняется);
+%   \( ... \)    — встроенные формулы;
+%   \includegraphics{...} — изображения (в CSV пишите \protect\includegraphics).
+\newcommand{\Qcell}[1]{{\renewcommand{\\}{\newline}#1}}
+
+\ExplSyntaxOn
+
+% Балл за вопрос по его позиции в билете (1, 2 или 3).
+\NewDocumentCommand \QMark { m }
+ {
+   \int_case:nnF { #1 }
+     { { 1 } { \OneQuestionMark } { 2 } { \TwoQuestionMark } { 3 } { \ThreeQuestionMark } }
+     { \OneQuestionMark }
+ }
+
+% Собирает строки таблицы для билета (строка #1 в БД questions):
+% перебирает столбцы 1..\NumberOfQuestions и включает только НЕПУСТЫЕ вопросы,
+% что даёт переменное число вопросов в разных билетах. Результат — в \TicketRows
+% (разворачивается ключом tabularray expand при наборе таблицы).
+\tl_new:N \l__examcards_rows_tl
+\tl_new:N \l__examcards_val_tl
+\NewDocumentCommand \BuildTicketRows { m }
+ {
+   \tl_clear:N \l__examcards_rows_tl
+   \int_step_inline:nn { \NumberOfQuestions }
+    {
+      \DTLgetvalue{\examcardsval}{questions}{#1}{##1}
+      \tl_set:No \l__examcards_val_tl { \examcardsval }
+      \tl_if_empty:NF \l__examcards_val_tl
+       {
+         \tl_if_empty:NF \l__examcards_rows_tl
+           { \tl_put_right:Nn \l__examcards_rows_tl { \\ } }
+         \tl_put_right:Ne \l__examcards_rows_tl
+           {
+             \exp_not:n { ##1 & } \exp_not:N \Qcell { \exp_not:V \l__examcards_val_tl }
+             \exp_not:n { & } \exp_not:N \QMark { \exp_not:n { ##1 } }
+           }
+       }
+    }
+   \tl_set_eq:NN \TicketRows \l__examcards_rows_tl
+ }
+\ExplSyntaxOff
