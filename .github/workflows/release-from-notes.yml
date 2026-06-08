@@ -34,8 +34,8 @@ jobs:
         working-directory: tex_form
         run: |
           mkdir -p ../exam_cards
-          pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
-          pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
+          pdflatex -halt-on-error -interaction=nonstopmode -output-directory=../exam_cards main.tex
+          pdflatex -halt-on-error -interaction=nonstopmode -output-directory=../exam_cards main.tex
           mv ../exam_cards/main.pdf ../exam_cards/exam_cards.pdf
 
       - name: Extract release notes for tag from RELEASE_NOTES.md
