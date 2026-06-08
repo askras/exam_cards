@@ -22,21 +22,15 @@ jobs:
       - name: Set TAG env
         run: echo "TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
 
-      - name: Install TeXLive
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            texlive-latex-recommended \
-            texlive-latex-extra \
-            texlive-lang-cyrillic
-
       - name: Build exam cards PDF
-        working-directory: tex_form
-        run: |
-          mkdir -p ../exam_cards
-          pdflatex -halt-on-error -interaction=nonstopmode -output-directory=../exam_cards main.tex
-          pdflatex -halt-on-error -interaction=nonstopmode -output-directory=../exam_cards main.tex
-          mv ../exam_cards/main.pdf ../exam_cards/exam_cards.pdf
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: tex_form
+          root_file: main.tex
+          args: -pdf -file-line-error -halt-on-error -interaction=nonstopmode -output-directory=../exam_cards
+
+      - name: Rename PDF
+        run: mv exam_cards/main.pdf exam_cards/exam_cards.pdf
 
       - name: Extract release notes for tag from RELEASE_NOTES.md
         id: notes

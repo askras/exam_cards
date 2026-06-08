@@ -3,6 +3,13 @@
   a4paper,
 ]{article}
 
+% ======================================================================
+%  ГЛОБАЛЬНЫЕ настройки — общие для всех дисциплин кафедры.
+%  Настройки конкретной дисциплины (курс, файл вопросов, баллы, протокол)
+%  вынесены в course.tex.
+% ======================================================================
+
+% --- Учреждение ---
 \newcommand{\University}
 {
   Федеральное государственное автономное образовательное учреждение\\
@@ -12,22 +19,13 @@
 }
 \newcommand{\Department}{ИУ10 <<ЗАЩИТА ИНФОРМАЦИИ>>}
 \newcommand{\HeadOfDepartment}{А.М. Сычев}
-\newcommand{\Course}{Управление рисками информационной безопасности}
-\newcommand{\Teacher}{Шмаков И.С.}
-\newcommand{\AcademicYear}{2025-2026}
-\newcommand{\DecreeNumber}{04.22-04/10ДСП}
-\newcommand{\DecreeDate}{25.05.2026}
 
-\newcommand{\FileQuestions}{questions.csv}
-\newcommand{\NumberOfQuestions}{3}
-\newcommand{\OneQuestionMark}{10}
-\newcommand{\TwoQuestionMark}{10}
-\newcommand{\ThreeQuestionMark}{10}
-
+% --- Оформление ---
 \newcommand{\IsPrintTitlePage}{true}
 \newcommand{\IsPrintCropLine}{true}
 \newcommand{\RowHeight}{20}
 
+% --- Пакеты ---
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english, russian]{babel}
@@ -42,24 +40,3 @@
 \usepackage{geometry}
 \geometry{top=1.0cm, bottom=1.0cm, left=1.2cm, right=1.2cm}
 \pagenumbering{gobble}
-
-\DTLloaddb[]{questions}{\FileQuestions}
-
-% --- Валидация конфигурации билета (datatool already loaded above) ---
-% 1) NumberOfQuestions: шаблон поддерживает только 2 или 3 вопроса в билете.
-\ifnum\NumberOfQuestions<2\relax
-  \PackageError{exam-cards}%
-    {NumberOfQuestions=\NumberOfQuestions, but only 2 or 3 are supported}%
-    {Set \string\NumberOfQuestions to 2 or 3 in config.tex.}%
-\else\ifnum\NumberOfQuestions>3\relax
-  \PackageError{exam-cards}%
-    {NumberOfQuestions=\NumberOfQuestions, but only 2 or 3 are supported}%
-    {Set \string\NumberOfQuestions to 2 or 3 in config.tex.}%
-\fi\fi
-% 2) Число столбцов в CSV должно совпадать с NumberOfQuestions.
-\ifnum\DTLcolumncount{questions}=\NumberOfQuestions\relax\else
-  \PackageError{exam-cards}%
-    {CSV file '\FileQuestions' has \DTLcolumncount{questions} columns but NumberOfQuestions=\NumberOfQuestions}%
-    {The number of columns in \FileQuestions\space must match \string\NumberOfQuestions\space (2 or 3).
-     Fix the CSV header/rows or the \string\NumberOfQuestions\space value in config.tex.}%
-\fi
