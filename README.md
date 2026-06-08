@@ -4,31 +4,34 @@
 
 Шаблон полностью настраивается и поддерживает как двух-, так и трёхвопросные билеты с возможностью указания баллов за каждый вопрос.
 
-Полный PDF-файл с примером: [Скачать example.pdf](exam_cards.pdf)
+Полный PDF-файл с примером: [Скачать exam_cards.pdf](exam_cards/exam_cards.pdf)
 
 
 
 * Как работать
 
 ```bash
-$ brew install --cask mactex-no-gui
+brew install --cask mactex-no-gui
 echo 'export PATH="/Library/TeX/texbin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 pdflatex --version
+
 cd tex_form
-$ pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
+# два прохода: datatool требует второй проход для корректного вывода
+pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
+pdflatex -interaction=nonstopmode -output-directory=../exam_cards main.tex
 mv ../exam_cards/main.pdf ../exam_cards/exam_cards.pdf
 ```
 
 * Release
 
 ```bash
-$ git tag -a v1.0.0 -m “Основные изменения: …” 
+$ git tag -a v1.0.0 -m "Основные изменения: …"
 $ git push origin v1.0.0
 
 # Альтернатива для использования - это RELEASE_NOTES
 $ git tag -a v1.0.0 -m "v1.0.0"
-$ git add "Release Notes.md" && git commit -m "Update notes for v1.0.0" 
+$ git add RELEASE_NOTES.md && git commit -m "Update notes for v1.0.0" 
 
 $ git tag -a v1.1.0 -m "v1.1.0" # текущий релиз
 $ git push origin v1.1.0
