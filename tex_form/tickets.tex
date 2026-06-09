@@ -1,0 +1,68 @@
+\foreach \num in {1,2,...,\DTLrowcount{questions}}
+{
+
+  \noindent
+  \begin{center}
+    \textbf{ \University }
+  \end{center}
+  \vspace{-0.5cm}
+  \begin{tikzpicture}
+    \draw[thick] (0,0) -- (\textwidth,0);
+  \end{tikzpicture}
+  \begin{center}
+    \textbf{ЭКЗАМЕНАЦИОННЫЙ БИЛЕТ № \num}\\
+    \textbf{По дисциплине <<\Course>>}
+  \end{center}
+
+  % Строки билета строятся динамически: включаются только непустые вопросы,
+  % поэтому в разных билетах может быть разное число вопросов (пустая ячейка
+  % CSV = вопрос пропускается). \TicketRows разворачивается ключом tabularray
+  % expand. row{2-4} безопасен и для меньшего числа: лишние строки игнорируются.
+  \BuildTicketRows{\num}
+  \begin{table}[h!]
+    \centering
+    \begin{tblr}[expand=\TicketRows]
+    {
+      width = \linewidth,
+      colspec = {Q[37]Q[693]Q[210]},
+      column{1} = {c},
+      column{3} = {c},
+      row{1}   = {c, m, font=\bfseries},
+      row{2-4} = {\RowHeight mm},
+      hlines,
+      vlines,
+    }
+      № & Вопрос / задача & Максимальная оценка в баллах \\
+      \TicketRows
+    \end{tblr}
+  \end{table}
+
+  \vspace{-0.5cm}
+  \noindent
+  \begin{tikzpicture}
+    \draw[thick] (0,0) -- (\textwidth,0);
+  \end{tikzpicture}
+  \noindent
+  \footnotesize
+  \textit
+  {
+    Билет рассмотрен и утвержден на заседании кафедры
+    от \DecreeDate{}г. протокол № \DecreeNumber
+  }
+
+  \vspace{0.9cm}
+  \noindent
+  \textbf{Заведующий кафедрой \Department \hfill \HeadOfDepartment}
+
+  \ifthenelse{\equal{\IsPrintCropLine}{true}}
+  {
+    \noindent
+    \begin{center}
+      \begin{tikzpicture}
+        \draw[dashed] (0,0) -- (\textwidth,0);
+      \end{tikzpicture}
+    \end{center}
+  }
+  {}
+  \pagebreak
+}

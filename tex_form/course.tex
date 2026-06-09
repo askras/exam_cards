@@ -1,0 +1,46 @@
+% ======================================================================
+%  Настройки ТЕКУЩЕЙ дисциплины.
+%  Чтобы сгенерировать билеты для другой дисциплины — скопируйте этот файл
+%  (например, course-crypto.tex), поправьте значения и подключите нужный
+%  файл в main.tex вместо course.tex. Глобальные настройки — в config.tex.
+% ======================================================================
+
+% --- Дисциплина ---
+\newcommand{\Course}{Финансовые технологии}
+\newcommand{\Teacher}{Шмаков И.С.}
+\newcommand{\AcademicYear}{2025-2026}
+
+% --- Протокол утверждения на кафедре ---
+\newcommand{\DecreeNumber}{04.22-04/10ДСП}
+\newcommand{\DecreeDate}{25.05.2026}
+
+% --- Вопросы и баллы ---
+\newcommand{\FileQuestions}{questions.csv}
+\newcommand{\NumberOfQuestions}{3}
+\newcommand{\OneQuestionMark}{10}
+\newcommand{\TwoQuestionMark}{10}
+\newcommand{\ThreeQuestionMark}{10}
+
+% --- Загрузка вопросов (datatool подключён в config.tex) ---
+\DTLloaddb[]{questions}{\FileQuestions}
+
+% --- Валидация конфигурации ---
+% NumberOfQuestions = число столбцов вопросов в CSV (= максимум вопросов в билете).
+% В отдельном билете вопросов может быть меньше: пустая ячейка CSV пропускается.
+% 1) NumberOfQuestions: шаблон поддерживает 1, 2 или 3 вопроса в билете.
+\ifnum\NumberOfQuestions<1\relax
+  \PackageError{exam-cards}%
+    {NumberOfQuestions=\NumberOfQuestions, but only 1, 2 or 3 are supported}%
+    {Set \string\NumberOfQuestions to 1, 2 or 3 in course.tex.}%
+\else\ifnum\NumberOfQuestions>3\relax
+  \PackageError{exam-cards}%
+    {NumberOfQuestions=\NumberOfQuestions, but only 1, 2 or 3 are supported}%
+    {Set \string\NumberOfQuestions to 1, 2 or 3 in course.tex.}%
+\fi\fi
+% 2) Число столбцов в CSV должно совпадать с NumberOfQuestions.
+\ifnum\DTLcolumncount{questions}=\NumberOfQuestions\relax\else
+  \PackageError{exam-cards}%
+    {CSV file '\FileQuestions' has \DTLcolumncount{questions} columns but NumberOfQuestions=\NumberOfQuestions}%
+    {The number of columns in \FileQuestions\space must match \string\NumberOfQuestions\space (1, 2 or 3).
+     Fix the CSV header/rows or the \string\NumberOfQuestions\space value in course.tex.}%
+\fi
